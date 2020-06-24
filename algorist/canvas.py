@@ -9,11 +9,15 @@ class Canvas:
         self.surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, width, height)
         self.ctx = cairo.Context(self.surface)
         self.frame = 1  # Used by saveFrame
+        self.fillColor = ()
 
     # Options
 
-    def color(self, r, g, b, a=2.0):
-        self.ctx.set_source_rgba(r, g, b, a)
+    def fill(self, v1, v2=None, v3=None, a=1.0):
+        if v2 is None or v3 is None:
+            # Make it grayscale!
+            v2 = v3 = v1
+        self.ctx.set_source_rgba(v1, v2, v3, a)
 
     # Shapes
 
@@ -28,7 +32,7 @@ class Canvas:
     def circle(self, x, y, radius):
         self.arc(x, y, radius, 0, 2 * math.pi)
 
-    def background(self):
+    def background(self, v1, v2=None, v3=None, a=1.0):
         self.rect(0, 0, self.size[0], self.size[1])
 
     def _fill(self):
