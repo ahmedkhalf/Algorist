@@ -2,14 +2,15 @@ __version__ = "0.0"
 
 import cairo
 import math
+import re
 
 
 class Canvas:
-    def __init__(self, fname, width, height):
+    def __init__(self, width, height):
         self.size = (width, height)
-        self.fname = fname
         self.surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, width, height)
         self.ctx = cairo.Context(self.surface)
+        self.frame = 1  # Used by saveFrame
 
     # Options
 
@@ -44,5 +45,18 @@ class Canvas:
 
     # Save
 
-    def save(self, fname):
-        self.surface.write_to_png(fname)
+    def save(self, filename):
+        self.surface.write_to_png(filename)
+
+    def saveFrame(self, filename="screen-####.png"):
+        x = re.search("#+", filename)
+
+        if x is None:
+            raise Exception("Hashtag (#) not found in filename!")
+        elif self.frame > x.end() - x.start():
+            raise Exception("Current frame has exceeded hashtag length!")
+
+        frameStr = f"{self.frame:04}"
+        filename_ = filename[0 : x.start()] + frameStr + filename[x.end() :]
+        self.save(filename_)
+        self.frame += 1
