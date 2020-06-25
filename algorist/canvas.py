@@ -1,3 +1,4 @@
+from algorist import color
 import cairo
 import math
 import re
@@ -13,11 +14,11 @@ class Canvas:
 
     # Options
 
-    def fill(self, v1, v2=None, v3=None, a=1.0):
-        if v2 is None or v3 is None:
-            # Make it grayscale!
-            v2 = v3 = v1
-        self.ctx.set_source_rgba(v1, v2, v3, a)
+    def fill(self, *args):
+        if len(args) == 1 and type(args[0]) == color.Color:
+            self.fillColor = args[0]
+        else:
+            self.fillColor = color.Color(*args)
 
     # Shapes
 
@@ -36,6 +37,8 @@ class Canvas:
         self.rect(0, 0, self.size[0], self.size[1])
 
     def _fill(self):
+        norm = self.fillColor.normalize()
+        self.ctx.set_source_rgba(norm[0], norm[1], norm[2], norm[3])
         self.ctx.fill()
 
     def _stroke(self):
