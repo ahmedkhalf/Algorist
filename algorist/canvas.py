@@ -19,13 +19,19 @@ class Canvas:
         if len(args) == 1 and type(args[0]) == color.Color:
             self.fillColor = args[0]
         else:
-            self.fillColor.setColor(*args)
+            self.fillColor = color.Color(*args)
+
+    def noFill(self):
+        self.fillColor = None
 
     def stroke(self, *args):
         if len(args) == 1 and type(args[0]) == color.Color:
             self.strokeColor = args[0]
         else:
-            self.strokeColor.setColor(*args)
+            self.strokeColor = color.Color(*args)
+
+    def noStroke(self):
+        self.strokeColor = None
 
     # Shapes
 
@@ -44,14 +50,16 @@ class Canvas:
         self.rect(0, 0, self.size[0], self.size[1])
 
     def _fill(self):
-        norm = self.fillColor.normalize()
-        self.ctx.set_source_rgba(*norm)
-        self.ctx.fill()
+        if self.fillColor is not None:
+            norm = self.fillColor.normalize()
+            self.ctx.set_source_rgba(*norm)
+            self.ctx.fill()
 
     def _stroke(self):
-        norm = self.strokeColor.normalize()
-        self.ctx.set_source_rgba(*norm)
-        self.ctx.stroke()
+        if self.fillColor is not None:
+            norm = self.strokeColor.normalize()
+            self.ctx.set_source_rgba(*norm)
+            self.ctx.stroke()
 
     def _blit(self):
         self._fill()
