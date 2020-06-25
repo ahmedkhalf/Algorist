@@ -10,7 +10,8 @@ class Canvas:
         self.surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, width, height)
         self.ctx = cairo.Context(self.surface)
         self.frame = 1  # Used by saveFrame
-        self.fillColor = ()
+        self.fillColor = color.Color(255)
+        self.strokeColor = color.Color(0)
 
     # Options
 
@@ -18,7 +19,13 @@ class Canvas:
         if len(args) == 1 and type(args[0]) == color.Color:
             self.fillColor = args[0]
         else:
-            self.fillColor = color.Color(*args)
+            self.fillColor.setColor(*args)
+
+    def stroke(self, *args):
+        if len(args) == 1 and type(args[0]) == color.Color:
+            self.strokeColor = args[0]
+        else:
+            self.strokeColor.setColor(*args)
 
     # Shapes
 
@@ -38,10 +45,12 @@ class Canvas:
 
     def _fill(self):
         norm = self.fillColor.normalize()
-        self.ctx.set_source_rgba(norm[0], norm[1], norm[2], norm[3])
+        self.ctx.set_source_rgba(*norm)
         self.ctx.fill()
 
     def _stroke(self):
+        norm = self.strokeColor.normalize()
+        self.ctx.set_source_rgba(*norm)
         self.ctx.stroke()
 
     def _blit(self):
